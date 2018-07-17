@@ -1,6 +1,8 @@
 #!/bin/bash
 
-host="http://127.0.0.1:3002/wallet/v1"
+host="http://127.0.0.1:13002/wallet/v1"
+
+TIMEFORMAT=%R
 
 balance() {
 	data="{ \"blockchain\": \"mongo\", \"account-id\": \"foobar${RANDOM}\" }"
@@ -12,11 +14,9 @@ balance() {
 	echo -e "$(date +%F_%H:%M:%S)"
 	echo "data: $data"
 
-	START_TIME=$SECONDS
-        curl -s -X POST \
+	{ time (curl -s -X POST \
 	-H 'Content-Type: application/json' \
-	-H 'Accept: application/json' -d @$dfile "$api"
-	echo "time: " $(($SECONDS - $START_TIME))
+	-H 'Accept: application/json' -d @$dfile "$api") ; } 2>> balance-times.csv
 
 	rm -f "$dfile"
 }
@@ -31,9 +31,9 @@ listall() {
 	echo -e "$(date +%F_%H:%M:%S)"
 	echo "data: $data"
 
-	curl -s -X POST \
+	{ time (curl -s -X POST \
 	-H 'Content-Type: application/json' \
-	-H 'Accept: application/json' -d @$dfile "$api"
+	-H 'Accept: application/json' -d @$dfile "$api") ; } 2>> listall-times.csv
 
 	rm -f "$dfile"
 }
@@ -48,9 +48,9 @@ listacc() {
 	echo -e "$(date +%F_%H:%M:%S)"
 	echo "data: $data"
 
-	curl -s -X POST \
+	{ time (curl -s -X POST \
 	-H 'Content-Type: application/json' \
-	-H 'Accept: application/json' -d @$dfile "$api"
+	-H 'Accept: application/json' -d @$dfile "$api") ; } 2>> listacc-times.csv
 
 	rm -f "$dfile"
 }
@@ -65,9 +65,9 @@ maketx() {
 	echo -e "$(date +%F_%H:%M:%S)"	
 	echo "data: $data"
 
-        time -o "times" (curl -s -X POST \
+	{ time  (curl -s -X POST \
 	-H 'Content-Type: application/json' \
-	-H 'Accept: application/json' -d @$dfile "$api")
+	-H 'Accept: application/json' -d @$dfile "$api") ; } 2>> maketx-times.csv
 
 	rm -f "$dfile"
 }
